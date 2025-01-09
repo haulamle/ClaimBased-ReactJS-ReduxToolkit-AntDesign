@@ -1,9 +1,10 @@
-import { Button, Card, Form, Input, message, Typography } from "antd";
+import { Button, Card, Form, Input, message, Space, Typography } from "antd";
 import { useState } from "react";
 import { colors } from "../../constants/colors";
 import handleAPI from "../../api/handleAPI";
 import { useDispatch } from "react-redux";
 import { addAuth } from "../../redux/reducers/authReducer";
+import { Link } from "react-router-dom";
 
 const { Title, Paragraph } = Typography;
 const Login = () => {
@@ -76,6 +77,13 @@ const Login = () => {
         >
           Login
         </Button>
+      </div>
+      <div className="mt-4 text-center">
+        <Space>
+          <Link style={{ color: colors.primary500 }} to="/forgot-password">
+            Forgot your account?
+          </Link>
+        </Space>
       </div>
     </Card>
   );

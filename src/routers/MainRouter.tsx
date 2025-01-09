@@ -3,7 +3,7 @@ import { Content } from "antd/es/layout/layout";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { SiderComponent } from "../components";
 import { HomeScreen } from "../screens";
-import { Permission, User, Setting } from "../screens/setting";
+import { Roles, User, Setting, ListRole } from "../screens/setting";
 import { useSelector } from "react-redux";
 import { authSelector } from "../redux/reducers/authReducer";
 
@@ -27,13 +27,20 @@ const MainRouter = () => {
         <Content className="pt-3 container-fluid bg-white">
           <Routes>
             <Route path="/" element={<HomeScreen />} />
-
             <Route path="/setting" element={<Setting />}>
               <Route
-                path="perrmission"
+                path="list-role"
                 element={
                   <PermissionRoute>
-                    <Permission />
+                    <ListRole />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="list-role/roles"
+                element={
+                  <PermissionRoute>
+                    <Roles />
                   </PermissionRoute>
                 }
               />

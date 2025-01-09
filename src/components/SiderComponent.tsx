@@ -10,6 +10,7 @@ type MenuItem = Required<MenuProps>["items"][number];
 const SiderComponent = () => {
   const auth: AuthState = useSelector(authSelector);
   const userRoles = auth.user.roles.map((x: any) => x.name);
+
   const getMenuItems = (): MenuItem[] => {
     const items: MenuItem[] = [
       {
@@ -22,8 +23,8 @@ const SiderComponent = () => {
     const settingChildren: MenuItem[] = [];
     if (userRoles.some((role) => ["ADMIN", "MANAGER"].includes(role))) {
       settingChildren.push({
-        key: "Permission",
-        label: <Link to={"/setting/perrmission"}>Permission</Link>,
+        key: "ListRole",
+        label: <Link to={"/setting/list-role"}>List Role</Link>,
         icon: <I3Square size={20} />,
       });
     }

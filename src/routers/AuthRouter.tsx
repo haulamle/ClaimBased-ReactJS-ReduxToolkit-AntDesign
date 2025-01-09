@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Login from "../screens/auth/Login";
+import { ForgotPass } from "../screens/auth";
 
 const AuthRouter = () => {
   return (
@@ -25,6 +26,7 @@ const AuthRouter = () => {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPass />} />
             </Routes>
           </BrowserRouter>
         </div>

@@ -1,15 +1,25 @@
-import { Button, message, Space, Switch, Table, Tag, Typography } from "antd";
+import {
+  Button,
+  message,
+  Modal,
+  Space,
+  Switch,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import { ColumnProps } from "antd/es/table";
 import { useEffect, useState } from "react";
 import handleAPI from "../../api/handleAPI";
-import { AddRoleModal, EditUserModal } from "../../modals";
-import { Edit2 } from "iconsax-react";
+import { EditUserModal } from "../../modals";
+import { Edit2, Trash } from "iconsax-react";
 
 const { Title } = Typography;
+const { confirm } = Modal;
 const User = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [isvisibleAddRoleModal, setIsVisibleAddRoleModal] = useState(false);
   const [isModalAddRoleUserVisible, setIsModalAddRoleUserVisible] =
     useState(false);
   const [recordUser, setRecordUser] = useState<any>();
@@ -44,7 +54,6 @@ const User = () => {
       key: "name",
       render: (username: string) => <code>{username}</code>,
     },
-
     {
       title: "Roles",
       dataIndex: "",
@@ -76,15 +85,35 @@ const User = () => {
       key: "action",
       render: (_, record) => (
         <Space wrap>
-          <Button
-            onClick={() => {
-              setIsModalAddRoleUserVisible(true);
-              setRecordUser(record);
-            }}
-            icon={<Edit2 size={16} />}
-            size="middle"
-            type="primary"
-          />
+          <Tooltip title="Edit user">
+            <Button
+              onClick={() => {
+                setIsModalAddRoleUserVisible(true);
+                setRecordUser(record);
+              }}
+              icon={<Edit2 size={16} />}
+              size="middle"
+              type="primary"
+            />
+          </Tooltip>
+
+          <Tooltip title="Delete user">
+            <Button
+              onClick={() => {
+                confirm({
+                  title: "Are you sure you want to delete this user?",
+                  content:
+                    "When clicked the OK button, this user will be deleted.",
+                  onOk: () => {
+                    handleRemoveUser(record);
+                  },
+                });
+              }}
+              icon={<Trash size={16} className="text-danger" />}
+              size="middle"
+              type="default"
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -100,16 +129,32 @@ const User = () => {
     }
   };
 
+  const handleRemoveUser = async (record: any) => {
+    const api = `/users/${record.id}`;
+    try {
+      const res: any = await handleAPI(api, undefined, "delete");
+      message.success(res.message);
+      getUsers();
+    } catch (error: any) {
+      message.error(error.message || "Failed to delete user");
+    }
+  };
+
   return (
-    <div className="conttainer">
+    <div className="container">
       <div className="row">
         <div className="col-12">
           <Title level={3}>User Management</Title>
         </div>
         <div className="col-12 text-right">
-          <Button onClick={() => setIsVisibleAddRoleModal(true)} type="default">
-            Add Role
-          </Button>
+          <Space>
+            <Button
+              onClick={() => setIsModalAddRoleUserVisible(true)}
+              type="default"
+            >
+              Add User
+            </Button>
+          </Space>
         </div>
         <div className="col-12 mt-3">
           <Table
@@ -120,17 +165,13 @@ const User = () => {
           />
         </div>
       </div>
-      <AddRoleModal
-        visible={isvisibleAddRoleModal}
-        onClose={() => setIsVisibleAddRoleModal(false)}
-        onAddNew={() => {
-          setIsVisibleAddRoleModal(false);
-          getUsers();
-        }}
-      />
+
       <EditUserModal
         visible={isModalAddRoleUserVisible}
-        onClose={() => setIsModalAddRoleUserVisible(false)}
+        onClose={() => {
+          setIsModalAddRoleUserVisible(false);
+          setRecordUser(undefined);
+        }}
         onAddNew={() => {
           setIsModalAddRoleUserVisible(false);
           getUsers();

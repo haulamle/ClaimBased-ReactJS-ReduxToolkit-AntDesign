@@ -7,7 +7,7 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onAddNew: (val: any) => void;
-  user: UserType;
+  user?: UserType;
 }
 
 const EditUserModal = (props: Props) => {
@@ -38,16 +38,30 @@ const EditUserModal = (props: Props) => {
   const handleSubmit = async (values: any) => {
     try {
       setIsLoading(true);
-      await handleAPI(
-        `/users/${user.id}`,
-        {
-          username: values.username,
-          roleIds: values.roles,
-        },
-        "put"
-      );
+      const api = user ? `/users/${user.id}` : `/users`;
+      const method = user ? "put" : "post";
+      const body = user
+        ? {
+            username: values.username,
+            roleIds: values.roles,
+          }
+        : {
+            username: values.username,
+            roleIds: values.roles,
+            password: values.password,
+          };
 
-      message.success("User updated successfully");
+      const res: any = await handleAPI(api, body, method);
+      // await handleAPI(
+      //   `/users/${user?.id}`,
+      //   {
+      //     username: values.username,
+      //     roleIds: values.roles,
+      //   },
+      //   "put"
+      // );
+
+      message.success(res.message);
       onAddNew(values);
     } catch (error: any) {
       message.error(error.message);
@@ -56,11 +70,17 @@ const EditUserModal = (props: Props) => {
     }
   };
 
+  const handleCancel = async () => {
+    form.resetFields();
+    onClose();
+  };
+
   return (
     <Modal
-      title="Edit User"
+      title={`${user ? "Edit User" : "Add User"}  `}
       open={visible}
-      onCancel={onClose}
+      onCancel={handleCancel}
+      onClose={handleCancel}
       onOk={() => form.submit()}
       confirmLoading={isLoading}
       width={600}
@@ -73,6 +93,15 @@ const EditUserModal = (props: Props) => {
         >
           <Input />
         </Form.Item>
+        {!user && (
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please input password!" }]}
+          >
+            <Input />
+          </Form.Item>
+        )}
 
         <Form.Item
           label="Roles"

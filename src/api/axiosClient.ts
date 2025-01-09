@@ -14,7 +14,7 @@ const getAssetToken = () => {
 };
 
 const axiosClient = axios.create({
-  baseURL: baseURL,
+  baseURL,
   paramsSerializer: (params) => queryString.stringify(params),
 });
 
